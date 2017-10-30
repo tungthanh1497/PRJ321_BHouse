@@ -1,7 +1,5 @@
-create database BHouseDB;
-
-use BHouseDB;
-
+create database BHouseDB
+use BHouseDB
 create table RoomTypeTBL(
 	roomTypeID int not null,
 	optional bit not null,
@@ -73,26 +71,26 @@ INSERT INTO LoginTBL
 VALUES (3, 'anhch', 'anhch');
 
 INSERT INTO RoomTypeTBL
-Values (1, 1, 1, 'Full option and closed', 1400000);
+Values (1, 1, 1, 1400000, 'Full option and closed');
 INSERT INTO RoomTypeTBL
-Values (2, 1, 0, 'Full option but not closed', 1300000);
+Values (2, 1, 0, 1300000, 'Full option but not closed');
 INSERT INTO RoomTypeTBL
-Values (3, 0, 1, 'Closed but not full option', 1300000);
+Values (3, 0, 1, 1300000, 'Closed but not full option');
 INSERT INTO RoomTypeTBL
-Values (4, 0, 0, 'neither closed nor full option', 1100000);
+Values (4, 0, 0, 1100000, 'neither closed nor full option');
 
 INSERT INTO RoomInfoTBL
-Values (1, 1, 0, 2);
+Values (1, 1, 2, 0);
 INSERT INTO RoomInfoTBL
-Values (2, 2, 1, 0);
+Values (2, 2, 0, 1);
 INSERT INTO RoomInfoTBL
-Values (3, 3, 1, 0);
+Values (3, 3, 0, 1);
 INSERT INTO RoomInfoTBL
-Values (4, 4, 0, 1);
+Values (4, 4, 1, 0);
 
 INSERT INTO CustomerTBL
-Values (1, 1, 'Thoan Hamlowjnn', '111111111111', '0912345678', '0912345679', '09/18/2017');
+Values (2, 1, 'Thoan Hamlowjnn', '111111111111', '0912345678', '0912345679', '09/18/2017');
 INSERT INTO CustomerTBL
-Values (2, 1, 'Tsu Haml', '222222222222', '0987654321', '0987654320', '02/26/2017');
+Values (3, 1, 'Tsu Haml', '222222222222', '0987654321', '0987654320', '02/26/2017');
 INSERT INTO CustomerTBL
-Values (3, 4, 'TungDz', '333333333333', '0123456789', '0123456780', '07/02/2017');
+Values (1, 4, 'TungDz', '333333333333', '0123456789', '0123456780', '07/02/2017');
