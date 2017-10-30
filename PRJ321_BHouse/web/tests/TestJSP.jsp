@@ -22,5 +22,8 @@
     </head>
     <body>
         <h1> <%= i%> </h1>
+        <form action="http://localhost:8080/BHouse/TestServlet" method="POST">
+            <input type="submit" value="move" name="move" />
+        </form>
     </body>
 </html>
