@@ -12,7 +12,7 @@
     // khong can khoi tao id cho loginmodel
     LoginModel loginModel = new LoginModel("tungtt", "tungtt");
     DBContext dBContext = new DBContext();
-    String i = dBContext.getLoginId(loginModel);
+    int i = dBContext.getLoginId(loginModel);
 %>
 <!DOCTYPE html>
 <html>

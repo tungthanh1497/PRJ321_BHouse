@@ -24,7 +24,7 @@ public class DBContext {
         return -1 if login fail
         return id of user if login success (greater or equals 0)
      */
-    public String getLoginId(LoginModel loginModel) {
+    public int getLoginId(LoginModel loginModel) {
         try {
             DBConnect dBConnect = new DBConnect();
             Connection conn = dBConnect.getConnection();
@@ -34,7 +34,7 @@ public class DBContext {
             while (rs.next()) {
                 String psw = rs.getString(3);
                 if (psw.equals(loginModel.getPsw())) {
-                    return rs.getInt(1) + "";
+                    return rs.getInt(1);
                 }
                 break;
             }
@@ -44,6 +44,6 @@ public class DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return -1 + "";
+        return -1;
     }
 }
