@@ -94,3 +94,13 @@ INSERT INTO CustomerTBL
 Values (3, 1, 'Tsu Haml', '222222222222', '0987654321', '0987654320', '02/26/2017');
 INSERT INTO CustomerTBL
 Values (1, 4, 'TungDz', '333333333333', '0123456789', '0123456780', '07/02/2017');
+
+
+
+select * from CustomerTBL cus join RoomInfoTBL roomInfo on cus.roomNumber=roomInfo.roomNumber
+where cus.customerID = 3
+
+select * from RoomTypeTBL type join RoomInfoTBL info on type.roomTypeID=info.roomTypeID
+where info.roomNumber = 1
+
+

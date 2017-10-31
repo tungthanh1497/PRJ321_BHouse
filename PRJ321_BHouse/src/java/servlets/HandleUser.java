@@ -6,6 +6,7 @@
 package servlets;
 
 import databases.DBContext;
+import enities.RoomContent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -13,13 +14,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import models.LoginModel;
 
 /**
  *
- * @author tungthanh.1497
+ * @author Chu Anh
  */
-public class LoginServlet extends HttpServlet {
+public class HandleUser extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,25 +32,19 @@ public class LoginServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String uname = request.getParameter("uname");
-        String psw = request.getParameter("psw");
-        LoginModel loginModel = new LoginModel(uname, psw);
-        DBContext dBContext = new DBContext();
-        int id = dBContext.getLoginId(loginModel);
-        HttpSession session = request.getSession();
-        switch (id) {
-            case -1:
-                request.getRequestDispatcher("/LoginJSP.jsp").forward(request, response);
-                break;
-            case 0:
-                request.setAttribute("id", id);
-                request.getRequestDispatcher("/AdminJSP.jsp").forward(request, response);
-                break;
-            default:
-                request.setAttribute("id", id);
-                session.setAttribute("userID", id);
-                request.getRequestDispatcher("HandleUser").forward(request, response);
-                break;
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            HttpSession session = request.getSession();
+            Object sessionID = session.getAttribute("userID");
+            if (sessionID == null) {
+                response.sendRedirect("LoginJSP.jsp");
+            } else {
+                int uID = (int) sessionID;
+                databases.DBContext dbc = new DBContext();
+                RoomContent room = dbc.getRoomContent(uID);
+                request.setAttribute("roomContent", room);
+                request.getRequestDispatcher("CustomerJSP.jsp").forward(request, response);
+            }
         }
     }
 

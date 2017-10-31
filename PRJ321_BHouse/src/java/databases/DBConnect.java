@@ -17,11 +17,11 @@ import java.util.logging.Logger;
  */
 public class DBConnect {
 
-    private final String serverName = "localhost\\SQLEXPRESS";
+    private final String serverName = "localhost";
     private final String dbName = "BHouseDB";
     private final String portNumber = "1433";
     private final String userID = "sa";
-    private final String password = "123";
+    private final String password = "sa";
 
     public Connection getConnection() {
         try {
