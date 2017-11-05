@@ -11,15 +11,15 @@ package enities;
  */
 public class RoomTypeTBL {
     private int roomTypeID;
-    private byte optional;
-    private byte bit;
+    private boolean optional;
+    private boolean closed;
     private int price;
     private String note;
 
-    public RoomTypeTBL(int roomTypeID, byte optional, byte bit, int price, String note) {
+    public RoomTypeTBL(int roomTypeID, boolean optional, boolean closed, int price, String note) {
         this.roomTypeID = roomTypeID;
         this.optional = optional;
-        this.bit = bit;
+        this.closed = closed;
         this.price = price;
         this.note = note;
     }
@@ -32,20 +32,20 @@ public class RoomTypeTBL {
         this.roomTypeID = roomTypeID;
     }
 
-    public byte getOptional() {
+    public boolean isOptional() {
         return optional;
     }
 
-    public void setOptional(byte optional) {
+    public void setOptional(boolean optional) {
         this.optional = optional;
     }
 
-    public byte getBit() {
-        return bit;
+    public boolean isClosed() {
+        return closed;
     }
 
-    public void setBit(byte bit) {
-        this.bit = bit;
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
     public int getPrice() {
@@ -63,6 +63,7 @@ public class RoomTypeTBL {
     public void setNote(String note) {
         this.note = note;
     }
-    
+
+   
     
 }

@@ -5,12 +5,16 @@
  */
 package databases;
 
+import enities.CustomerTBL;
 import enities.RoomContent;
+import enities.RoomInfoTBL;
+import enities.RoomTypeTBL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.LoginModel;
@@ -102,6 +106,128 @@ public class DBContext {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
         return room;
+    }
+    //get data tu bang RoomType
+    public ArrayList<RoomTypeTBL> getDataRoomType() throws SQLException {
+        ArrayList<RoomTypeTBL> arr = new ArrayList<>();
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        String query = "select * from RoomTypeTBL";
+        Statement stm = con.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        while (rs.next()) {
+            arr.add(new RoomTypeTBL(rs.getInt(1), rs.getBoolean(2), rs.getBoolean(3), rs.getInt(4), rs.getString(5)));
+        }
+        return arr;
+    }
+
+    //get data tu bang room info
+    public ArrayList<RoomInfoTBL> getDataRoomInfo() throws SQLException {
+        ArrayList<RoomInfoTBL> arr = new ArrayList<>();
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        String query = "select * from RoomInfoTBL";
+        Statement stm = con.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        while (rs.next()) {
+            arr.add(new RoomInfoTBL(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getBoolean(4)));
+        }
+        return arr;
+    }
+
+    //get data tu bang customer
+    public ArrayList<CustomerTBL> getDataCustomer() throws SQLException {
+        ArrayList<CustomerTBL> arr = new ArrayList<>();
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        String query = "select * from CustomerTBL";
+        Statement stm = con.createStatement();
+        ResultSet rs = stm.executeQuery(query);
+        while (rs.next()) {
+            arr.add(new CustomerTBL(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDate(7)));
+        }
+        return arr;
+    }
+
+    //remove customer from CustomerTBL
+    public void removeCustomer(int customerID) throws SQLException {
+        int roomNumber = 0;
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "delete from CustomerTBL where customerID =" + customerID;
+        stm.execute(query);
+    }
+
+    public int getRoomNumber(int customerID) throws SQLException {
+        int roomNumber = 0;
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "select roomNumber from CustomerTBL where customerID =" + customerID;
+        ResultSet rs = stm.executeQuery(query);
+        while (rs.next()) {
+            roomNumber = rs.getInt(1);
+        }
+        return roomNumber;
+    }
+
+    //change Available in RoomInfo
+    public void changeAvailble(int roomNumber, int status) throws SQLException {
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "update RoomInfoTBL set available =" + status + " where roomNumber =" + roomNumber;
+        stm.execute(query);
+    }
+
+    //redece num person in room when remove Customer
+    public void changeNumperson(int customerID, int value) throws SQLException {
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "update RoomInfoTBL set numPerson = numPerson" + value + " where roomNumber =" + getRoomNumber(customerID);
+        stm.execute(query);
+    }
+
+    //getNumperson in room
+    public int getNumPersoninRoom(int roomNumber) throws SQLException {
+        int numPerson = 0;
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "select numPerson from RoomInfoTBL where roomNumber =" + roomNumber;
+        ResultSet rs = stm.executeQuery(query);
+        while (rs.next()) {
+            numPerson = rs.getInt(1);
+        }
+        return numPerson;
+    }
+    
+    public void createNewTypeRoom(int RoomID, int optional, int closed, int price, String note) throws SQLException {
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "INSERT INTO RoomTypeTBL Values ("+RoomID+","+optional+","+closed+","+price+",'"+note+"');";
+        stm.execute(query);
+    }
+    
+    public void updateTypeRoom(int RoomID, int price) throws SQLException
+    {
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "update RoomTypeTBL set price="+price+" where roomTypeID ="+RoomID+ ";";
+        stm.execute(query);
+    }
+    
+    public void updateRoomInFo(int RoomNumber, int RoomTypeID) throws SQLException
+    {
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "update RoomInfoTBL set roomTypeID="+RoomTypeID+" where roomNumber ="+RoomNumber+ ";";
+        stm.execute(query);
     }
     
 }

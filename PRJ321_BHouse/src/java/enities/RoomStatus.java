@@ -7,18 +7,22 @@ package enities;
 
 /**
  *
- * @author Chu Anh
+ * @author lenovo
  */
-public class RoomInfoTBL {
-    private int roomNumber;
-    private int roomTypeID;
-    private int numPerson;
-    private boolean available;
+public class RoomStatus {
+    int roomNumber;
+    boolean optional;
+    boolean closed;
+    int numPerson;
+    int price;
+    boolean available;
 
-    public RoomInfoTBL(int roomNumber, int roomTypeID, int numPerson, boolean available) {
+    public RoomStatus(int roomNumber, boolean optional, boolean closed, int numPerson, int price, boolean available) {
         this.roomNumber = roomNumber;
-        this.roomTypeID = roomTypeID;
+        this.optional = optional;
+        this.closed = closed;
         this.numPerson = numPerson;
+        this.price = price;
         this.available = available;
     }
 
@@ -30,12 +34,20 @@ public class RoomInfoTBL {
         this.roomNumber = roomNumber;
     }
 
-    public int getRoomTypeID() {
-        return roomTypeID;
+    public boolean isOptional() {
+        return optional;
     }
 
-    public void setRoomTypeID(int roomTypeID) {
-        this.roomTypeID = roomTypeID;
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
     public int getNumPerson() {
@@ -46,6 +58,14 @@ public class RoomInfoTBL {
         this.numPerson = numPerson;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     public boolean isAvailable() {
         return available;
     }
@@ -53,7 +73,8 @@ public class RoomInfoTBL {
     public void setAvailable(boolean available) {
         this.available = available;
     }
-
-   
+    
+    
+ 
     
 }
