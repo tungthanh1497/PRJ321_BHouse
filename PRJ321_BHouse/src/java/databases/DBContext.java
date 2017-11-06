@@ -9,6 +9,7 @@ import enities.BillTBL;
 import enities.CustomerTBL;
 import enities.ExtraTBL;
 import enities.LoginTBL;
+import enities.Notification;
 import enities.RoomContent;
 import enities.RoomInfoTBL;
 import enities.RoomTypeTBL;
@@ -257,6 +258,36 @@ public class DBContext {
         return condition;
     }
 
+    //Load notification 
+    public ArrayList<Notification> getNotification() {
+        ArrayList<Notification> arrNoti = new ArrayList<>();
+        try {
+            int notificationID;
+            String title;
+            String detail;
+            java.sql.Date dateCreated;
+            DBConnect dBConnect = new DBConnect();
+            Connection conn = dBConnect.getConnection();
+            String sqlSelect = "select * from Notification";
+            PreparedStatement ps = conn.prepareStatement(sqlSelect);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                notificationID = rs.getInt("NotificationID");
+                title = rs.getString("Title");
+                detail = rs.getString("Detail");
+                dateCreated = rs.getDate("DateCreated");
+                Notification noti = new Notification(notificationID, title, detail, dateCreated);
+                arrNoti.add(noti);
+            }
+            rs.close();
+            ps.close();
+            conn.close();
+
+        } catch (Exception e) {
+        }
+        return arrNoti;
+    }
+
     //get data tu bang RoomType
     public ArrayList<RoomTypeTBL> getDataRoomType() throws SQLException {
         ArrayList<RoomTypeTBL> arr = new ArrayList<>();
@@ -379,6 +410,7 @@ public class DBContext {
         String query = "update RoomInfoTBL set roomTypeID=" + RoomTypeID + " where roomNumber =" + RoomNumber + ";";
         stm.execute(query);
     }
+
     public void updateCustomer(String id, String name, String card, String phone, String parent, String roomNumber, String date) throws SQLException {
         DBConnect dBConnect = new DBConnect();
         Connection con = dBConnect.getConnection();

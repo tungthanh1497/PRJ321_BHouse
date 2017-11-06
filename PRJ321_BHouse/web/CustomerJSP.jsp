@@ -4,6 +4,8 @@
     Author     : tungthanh.1497
 --%>
 
+<%@page import="enities.Notification"%>
+<%@page import="enities.Notification"%>
 <%@page import="enities.LoginTBL"%>
 <%@page import="enities.ExtraTBL"%>
 <%@page import="enities.Roommates"%>
@@ -219,6 +221,42 @@
         <h1 style="color: red">${newPassWord}</h1>
         <h1 style="color: red">${reNewPassWord}</h1>
     </form>
+    <%
+        }
+    %>
+
+    <%
+        //display notification for user
+        ArrayList<Notification> arrNoti = new ArrayList<Notification>();
+        arrNoti = (ArrayList<Notification>) request.getAttribute("arrNoti");
+        if (arrNoti instanceof ArrayList && arrNoti != null) {
+            if (arrNoti.size() == 0) {
+    %>
+    <h1 style="color: blue">There are no notifications</h1>
+    <%
+    } else {
+    %>
+    <h1 style="background: blue">News</h1>
+    <%
+        for (int i = 0; i < arrNoti.size(); i++) {
+            int reverse = arrNoti.size() - i - 1;
+    %>
+    *<%=defaultDate.format(arrNoti.get(i).getDateCreated())%> - 
+    <a href="HandleUser?build=notify&location=<%=reverse%>"><%=arrNoti.get(reverse).getTitle()%></a>
+    <%
+                }
+            }
+        }
+    %>
+    <%
+        //display detail notification
+        Notification detailNoti = (Notification) request.getAttribute("detailNoti");
+        if (detailNoti instanceof Notification && detailNoti != null) {
+    %>
+    <h1 style="background: blue">News</h1>
+    <h3>Title : <%=detailNoti.getTitle()%></h3>
+    <h3>Detail : <%=detailNoti.getDetail()%></h3>
+    <h5>Date : <%=defaultDate.format(detailNoti.getDateCreated())%></h5>
     <%
         }
     %>

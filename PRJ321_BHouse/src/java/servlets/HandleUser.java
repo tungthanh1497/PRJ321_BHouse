@@ -9,6 +9,7 @@ import databases.DBContext;
 import enities.BillTBL;
 import enities.ExtraTBL;
 import enities.LoginTBL;
+import enities.Notification;
 import enities.RoomContent;
 import enities.Roommates;
 import java.io.IOException;
@@ -77,6 +78,17 @@ public class HandleUser extends HttpServlet {
                 } else if (s.equals("changePWS")) {
                     LoginTBL acc = dbc.getAccount(uID);
                     request.setAttribute("account", acc);
+                } else if (s.equals("notify")) {
+                    ArrayList<Notification> listNoti = new ArrayList<>();
+                    listNoti = dbc.getNotification();
+                    String getlocation = request.getParameter("location");
+                    if (getlocation == null) {
+                        request.setAttribute("arrNoti", listNoti);
+                    }else{
+                        int location = Integer.parseInt(getlocation);
+                        Notification sendNoti = listNoti.get(location);
+                        request.setAttribute("detailNoti", sendNoti);
+                    }
                 } else if (s.equals("signOut")) {
                     session.removeAttribute("userID");
                     conditionOut = true;
