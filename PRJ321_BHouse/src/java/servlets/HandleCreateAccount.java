@@ -6,10 +6,6 @@
 package servlets;
 
 import databases.DBContext;
-import enities.AllInfoInRoom;
-import enities.CustomerTBL;
-import enities.RoomInfoTBL;
-import enities.RoomTypeTBL;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -18,12 +14,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import models.LoginModel;
 
 /**
  *
  * @author lenovo
  */
-public class HandleAdminServlet extends HttpServlet {
+public class HandleCreateAccount extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,59 +37,41 @@ public class HandleAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-           int roomNumber;
-            int price = 0;
-            boolean optional = false;
-            boolean closed = false;
-            boolean available;
-            ArrayList<String> namePerson = new ArrayList<>();
-            ArrayList<Integer> customerID = new ArrayList<>();
-
+            HttpSession session = request.getSession();
+            String uname = request.getParameter("username");
+            String password = request.getParameter("password");
+            ArrayList<LoginModel> arr = new ArrayList<LoginModel>();
             DBContext dbContext = new DBContext();
-            ArrayList<RoomInfoTBL> roomInfo = new ArrayList<>();
-            ArrayList<RoomTypeTBL> roomType = new ArrayList<>();
-            ArrayList<CustomerTBL> customer = new ArrayList<>();
-            ArrayList<AllInfoInRoom> allInfoRoom = new ArrayList<>();
 
             try {
-                roomInfo = dbContext.getDataRoomInfo();
-                roomType = dbContext.getDataRoomType();
-                customer = dbContext.getDataCustomer();
+                arr = dbContext.getDataLogin();
+
             } catch (SQLException ex) {
 
             }
-
-            for (int i = 0; i < roomInfo.size(); i++) {
-                customerID = new ArrayList<>();
-                namePerson = new ArrayList<>();
-                roomNumber = roomInfo.get(i).getRoomNumber();
-                available = roomInfo.get(i).isAvailable();
-
-                for (int u = 0; u < roomType.size(); u++) {
-                    if (roomInfo.get(i).getRoomTypeID() == roomType.get(u).getRoomTypeID()) {
-                        optional = roomType.get(u).isOptional();
-                        closed = roomType.get(u).isClosed();
-                        price = roomType.get(u).getPrice();
-                    }
+            boolean check = true;
+            String error = "";
+            for (int i = 0; i < arr.size(); i++) {
+              
+                if (arr.get(i).getUname().equals(uname.trim())) {
+                    check = false;
+                    break;
                 }
+            }   
+            if (check == false) {
+                error = "User name is existed";
+                session.setAttribute("error", error);
+                request.getRequestDispatcher("createAccount.jsp").forward(request, response);
+            } else {
+                try {
+                    dbContext.addAccount(uname, password);
+                    session.setAttribute("error", error);
+                    session.setAttribute("customerID", dbContext.getCustomerID(uname));
+                    request.getRequestDispatcher("createCustomer.jsp").forward(request, response);
+                    
+                } catch (SQLException ex) {
 
-                for (int j = 0; j < customer.size(); j++) {
-                    if (roomInfo.get(i).getRoomNumber() == customer.get(j).getRoomNumber()) {
-                        namePerson.add(customer.get(j).getCustomerName());
-                        customerID.add(customer.get(j).getCustomerID());
-                    }
                 }
-                allInfoRoom.add(new AllInfoInRoom(roomNumber, price, optional, closed, available, namePerson, customerID));
-            }
-            if (request.getParameter("roomInfo") != null) {
-                request.setAttribute("allInfoRoom", allInfoRoom);
-                request.getRequestDispatcher("EditRoomInfoJSP.jsp").forward(request, response);
-            } else if (request.getParameter("roomType") != null) {
-                request.setAttribute("roomType", roomType);
-                request.getRequestDispatcher("EditRoomTypeJSP.jsp").forward(request, response);
-            }else if(request.getParameter("view") != null)
-            {
-                request.getRequestDispatcher("ViewCustomer.jsp").forward(request, response);
             }
         }
     }

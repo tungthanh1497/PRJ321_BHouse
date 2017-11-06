@@ -6,24 +6,24 @@
 package servlets;
 
 import databases.DBContext;
-import enities.AllInfoInRoom;
-import enities.CustomerTBL;
 import enities.RoomInfoTBL;
-import enities.RoomTypeTBL;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author lenovo
  */
-public class HandleAdminServlet extends HttpServlet {
+public class HandleCreateRoom extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,59 +39,58 @@ public class HandleAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-           int roomNumber;
-            int price = 0;
-            boolean optional = false;
-            boolean closed = false;
-            boolean available;
-            ArrayList<String> namePerson = new ArrayList<>();
-            ArrayList<Integer> customerID = new ArrayList<>();
-
+            HttpSession session = request.getSession();
+            ArrayList<RoomInfoTBL> arr = new ArrayList<RoomInfoTBL>();
             DBContext dbContext = new DBContext();
-            ArrayList<RoomInfoTBL> roomInfo = new ArrayList<>();
-            ArrayList<RoomTypeTBL> roomType = new ArrayList<>();
-            ArrayList<CustomerTBL> customer = new ArrayList<>();
-            ArrayList<AllInfoInRoom> allInfoRoom = new ArrayList<>();
-
             try {
-                roomInfo = dbContext.getDataRoomInfo();
-                roomType = dbContext.getDataRoomType();
-                customer = dbContext.getDataCustomer();
+                arr = dbContext.getDataRoomInfo();
             } catch (SQLException ex) {
-
+                Logger.getLogger(HandleCreateRoom.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            for (int i = 0; i < roomInfo.size(); i++) {
-                customerID = new ArrayList<>();
-                namePerson = new ArrayList<>();
-                roomNumber = roomInfo.get(i).getRoomNumber();
-                available = roomInfo.get(i).isAvailable();
-
-                for (int u = 0; u < roomType.size(); u++) {
-                    if (roomInfo.get(i).getRoomTypeID() == roomType.get(u).getRoomTypeID()) {
-                        optional = roomType.get(u).isOptional();
-                        closed = roomType.get(u).isClosed();
-                        price = roomType.get(u).getPrice();
-                    }
-                }
-
-                for (int j = 0; j < customer.size(); j++) {
-                    if (roomInfo.get(i).getRoomNumber() == customer.get(j).getRoomNumber()) {
-                        namePerson.add(customer.get(j).getCustomerName());
-                        customerID.add(customer.get(j).getCustomerID());
-                    }
-                }
-                allInfoRoom.add(new AllInfoInRoom(roomNumber, price, optional, closed, available, namePerson, customerID));
-            }
-            if (request.getParameter("roomInfo") != null) {
-                request.setAttribute("allInfoRoom", allInfoRoom);
-                request.getRequestDispatcher("EditRoomInfoJSP.jsp").forward(request, response);
-            } else if (request.getParameter("roomType") != null) {
-                request.setAttribute("roomType", roomType);
-                request.getRequestDispatcher("EditRoomTypeJSP.jsp").forward(request, response);
-            }else if(request.getParameter("view") != null)
+            boolean check = true;
+            int roomNumber=0;
+            try
             {
-                request.getRequestDispatcher("ViewCustomer.jsp").forward(request, response);
+                roomNumber = Integer.parseInt(request.getParameter("roomNumber").toString().trim());
+            }catch(Exception e)
+            {
+                session.setAttribute("roomNumber", "Room Number must be number"+"<br>");
+                check = false;
+            }
+            
+            
+            for(int i = 0; i < arr.size(); i++)
+            {
+                if(arr.get(i).getRoomNumber() == roomNumber)
+                {
+                    session.setAttribute("roomNumber", "Room Number have existed" +"<br>");
+                    check = false;
+                    break;
+                }
+            }
+            int roomTypeID = Integer.parseInt(request.getParameter("roomType").toString());
+            
+            int available = 0;
+            if (request.getParameter("available") != null) {
+                if (!request.getParameter("available").equals("on")) {
+                    available = 0;
+                } else {
+                    available = 1;
+                }
+            }
+            if(check == true)
+            {
+                try {
+                    dbContext.createNewRoom(roomNumber, roomTypeID, 0, available);
+                } catch (SQLException ex) {
+                    Logger.getLogger(HandleCreateRoom.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+               response.sendRedirect("/BHouse/HandleAdminServlet?roomInfo=chhoose");
+            }
+            else
+            {
+                request.getRequestDispatcher("createNewRoom.jsp").forward(request, response);
             }
         }
     }

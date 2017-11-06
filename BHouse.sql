@@ -1,5 +1,6 @@
 create database BHouseDB
 use BHouseDB
+
 create table RoomTypeTBL(
 	roomTypeID int not null,
 	optional bit not null,
@@ -120,6 +121,13 @@ values (1, 'binh nong lanh', 1, 2300000, 'chap binh nong lanh', '10/04/2017');
 Insert into ExtraTBL
 values (1, 'air blade', 6, 8000000, 'hacker', '10/14/2017');
 
+create table Notification(
+ NotificationID int not null identity(1,1),
+ Title varchar(200) not null,
+ Detail varchar (1000),
+ DateCreated date not null,
+ primary key(NotificationID),
+);
 
 
 ===================================================================================

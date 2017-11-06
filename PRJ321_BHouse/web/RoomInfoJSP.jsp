@@ -36,7 +36,7 @@
                         <td>
                             <% for (int u = 0; u < allInfoRoom.get(i).getNamePerson().size(); u++) {
                             %>
-                            <a href=""><%= allInfoRoom.get(i).getNamePerson().get(u)%> </a> [<a href="RoomInfoJSP.jsp" onclick="YNconfirm(<%= allInfoRoom.get(i).getCustomerID().get(u) %>); return false;">X</a>] <br>
+                            <a href="editCustomer.jsp?customerID=<%= allInfoRoom.get(i).getCustomerID().get(u) %>"><%= allInfoRoom.get(i).getNamePerson().get(u)%> </a> [<a href="RoomInfoJSP.jsp" onclick="YNconfirm(<%= allInfoRoom.get(i).getCustomerID().get(u) %>); return false;">X</a>] <br>
                             <%}%>
                         </td>
                         <td>

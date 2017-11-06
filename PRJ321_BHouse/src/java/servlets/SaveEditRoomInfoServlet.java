@@ -56,8 +56,10 @@ public class SaveEditRoomInfoServlet extends HttpServlet {
                 type = 4;
             }
             try {
-            
-                dbContext.changeAvailble(roomNumber, available);
+                if(dbContext.getNumPersoninRoom(roomNumber)<3)
+                {
+                    dbContext.changeAvailble(roomNumber, available);
+                }
                 dbContext.updateRoomInFo(roomNumber, type);
             } catch (Exception e) {
                 

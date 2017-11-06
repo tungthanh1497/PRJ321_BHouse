@@ -68,7 +68,7 @@
             %>
         </tbody>
     </table>
-
+<a href="createNewRoom.jsp"><input type="submit" value="Create new Room"></a>
 </body>
 
 

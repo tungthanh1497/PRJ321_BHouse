@@ -68,7 +68,7 @@
         <form action = "/BHouse/HandleAdminServlet">
             <input type="submit" value="Edit Room Infomation" name="roomInfo">
             <input type="submit" value="Edit Room Type" name="roomType">
-            <input type="submit" value ="Add new Customer" name="Add">
+             <input type="submit" value ="View Customer" name="view">
         </form>
 
     </body>

@@ -32,6 +32,22 @@
         <servlet-name>SaveEditRoomInfoServlet</servlet-name>
         <servlet-class>servlets.SaveEditRoomInfoServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HandleCreateAccount</servlet-name>
+        <servlet-class>servlets.HandleCreateAccount</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HandleCreateCustomer</servlet-name>
+        <servlet-class>servlets.HandleCreateCustomer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HandleCreateRoom</servlet-name>
+        <servlet-class>servlets.HandleCreateRoom</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HandleEditCustomer</servlet-name>
+        <servlet-class>servlets.HandleEditCustomer</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>TestServlet</servlet-name>
         <url-pattern>/TestServlet</url-pattern>
@@ -63,6 +79,22 @@
     <servlet-mapping>
         <servlet-name>SaveEditRoomInfoServlet</servlet-name>
         <url-pattern>/SaveEditRoomInfoServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleCreateAccount</servlet-name>
+        <url-pattern>/HandleCreateAccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleCreateCustomer</servlet-name>
+        <url-pattern>/HandleCreateCustomer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleCreateRoom</servlet-name>
+        <url-pattern>/HandleCreateRoom</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleEditCustomer</servlet-name>
+        <url-pattern>/HandleEditCustomer</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
