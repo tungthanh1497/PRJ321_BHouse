@@ -12,18 +12,29 @@ import java.sql.Date;
  * @author Chu Anh
  */
 public class BillTBL {
+
+    private int numPer;
     private int roomNumber;
     private int defaultFee;
     private int electricity;
     private int extraFee;
     private java.sql.Date monthBill;
 
-    public BillTBL(int roomNumber, int defaultFee, int electricity, int extraFee, Date monthBill) {
+    public BillTBL(int numPer, int roomNumber, int defaultFee, int electricity, int extraFee, Date monthBill) {
+        this.numPer = numPer;
         this.roomNumber = roomNumber;
         this.defaultFee = defaultFee;
         this.electricity = electricity;
         this.extraFee = extraFee;
         this.monthBill = monthBill;
+    }
+
+    public int getNumPer() {
+        return numPer;
+    }
+
+    public void setNumPer(int numPer) {
+        this.numPer = numPer;
     }
 
     public int getRoomNumber() {
@@ -65,6 +76,9 @@ public class BillTBL {
     public void setMonthBill(Date monthBill) {
         this.monthBill = monthBill;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "BillTBL{" + "roomNumber=" + roomNumber + ", defaultFee=" + defaultFee + ", electricity=" + electricity + ", extraFee=" + extraFee + ", monthBill=" + monthBill + '}';
+    }
 }

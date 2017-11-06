@@ -40,6 +40,7 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         switch (id) {
             case -1:
+                 request.setAttribute("notifyLogin", "Account or password is not correct !");
                 request.getRequestDispatcher("/LoginJSP.jsp").forward(request, response);
                 break;
             case 0:

@@ -5,16 +5,23 @@
  */
 package databases;
 
+import enities.BillTBL;
 import enities.CustomerTBL;
+import enities.ExtraTBL;
+import enities.LoginTBL;
 import enities.RoomContent;
 import enities.RoomInfoTBL;
 import enities.RoomTypeTBL;
+import enities.Roommates;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.LoginModel;
@@ -24,6 +31,21 @@ import models.LoginModel;
  * @author tungthanh.1497
  */
 public class DBContext {
+
+    ArrayList<Roommates> arrRoomMates = new ArrayList<>();//save information name and phonenumber of room mate
+    ArrayList<BillTBL> arrBill = new ArrayList<>();//save all bill of your customer from join room to current time
+
+    public ArrayList<BillTBL> getArrBill() {
+        return arrBill;
+    }
+
+    public ArrayList<Roommates> getArrRoomMates() {
+        return arrRoomMates;
+    }
+
+    public void setArrBill(ArrayList<BillTBL> arrBill) {
+        this.arrBill = arrBill;
+    }
 
     /*=======CHECK LOGIN=======
         return -1 if login fail
@@ -51,10 +73,11 @@ public class DBContext {
         }
         return -1;
     }
-    
-        //get infomation for user view room content
+
+    //get infomation for user view room content
     public RoomContent getRoomContent(int idUser) {
         RoomContent room = null;
+
         try {
             int roomNum = 0;
             String cusName = null;
@@ -68,7 +91,8 @@ public class DBContext {
             int optional;
             int closed;
             String note;
-
+            BillTBL bill = null;
+            java.sql.Date sqlDate = java.sql.Date.valueOf(LocalDate.now());
             DBConnect dBConnect = new DBConnect();
             Connection conn = dBConnect.getConnection();
             String sqlSelect = "select * from CustomerTBL cus join RoomInfoTBL"
@@ -82,6 +106,7 @@ public class DBContext {
                 identityCard = rs.getString("identityCard");
                 phoneNum = rs.getString("phoneNumber");
                 parentPhoneNum = rs.getString("parentsPhoneNumber");
+                numPerson = rs.getInt("numPerson");
                 dateJoin = rs.getDate("dateJoin");
                 roomType = rs.getInt("roomTypeID");
             }
@@ -99,6 +124,36 @@ public class DBContext {
                         parentPhoneNum, dateJoin, numPerson, roomType, price,
                         optional, closed, note);
             }
+            //if room have more 2 person , get infomation of roomates
+            if (numPerson > 1) {
+                sqlSelect = "select * from CustomerTBL where roomNumber = " + roomNum
+                        + " and customerID != " + idUser;
+                ps = conn.prepareStatement(sqlSelect);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    String name = rs.getString("customerName");
+                    String phoneNumber = rs.getString("phoneNumber");
+                    java.sql.Date date = rs.getDate("dateJoin");
+                    Roommates roomMate = new Roommates(name, phoneNum, date);
+                    arrRoomMates.add(roomMate);
+                }
+            }
+            sqlSelect = "select BillTBL.defaultFee,BillTBL.electricity, BillTBL.extraFee,BillTBL.monthBill , \n"
+                    + "RoomInfoTBL.numPerson from BillTBL join RoomInfoTBL on BillTBL.roomNumber = RoomInfoTBL.roomNumber\n"
+                    + " where monthBill between '" + dateJoin + "' and '" + sqlDate + "' and RoomInfoTBL.roomNumber =" + roomNum;
+            ps = conn.prepareStatement(sqlSelect);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                int defaulFee, electricity, extra, numPer;
+                java.sql.Date dateBill;
+                defaulFee = rs.getInt("defaultFee");
+                electricity = rs.getInt("electricity");
+                extra = rs.getInt("extraFee");
+                dateBill = rs.getDate("monthBill");
+                numPer = rs.getInt("numPerson");
+                bill = new BillTBL(numPer, roomNum, defaulFee, electricity, extra, dateBill);
+                arrBill.add(bill);
+            }
             rs.close();
             ps.close();
             conn.close();
@@ -107,6 +162,101 @@ public class DBContext {
         }
         return room;
     }
+    //get information for user view extra bill of month 
+
+    public ArrayList<ExtraTBL> getExtraFee(int roomNum, String month) {
+        ArrayList<ExtraTBL> arrExtra = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+        long l = java.sql.Date.parse(month);
+        java.sql.Date sqlDate = new java.sql.Date(l);
+        Calendar car = Calendar.getInstance();
+        car.setTime(sqlDate);
+        car.add(Calendar.MONTH, 1);
+        try {
+            int extraID;
+            int roomNumber;
+            String extraName;
+            int extraNumber;
+            int price;
+            String detail;
+            java.sql.Date extraDate;
+            DBConnect dBConnect = new DBConnect();
+            Connection conn = dBConnect.getConnection();
+            String sqlSelect = "select * from ExtraTBL extra where  "
+                    + "extra.extraDate >= '" + sdf.format(sqlDate)
+                    + "' and extra.extraDate "
+                    + "< '" + sdf.format(car.getTime()) + "' and extra.roomNumber =" + roomNum;
+            PreparedStatement ps = conn.prepareStatement(sqlSelect);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                extraID = rs.getInt("extraID");
+                roomNumber = rs.getInt("roomNumber");
+                extraName = rs.getString("extraName");
+                extraNumber = rs.getInt("extraNumber");
+                price = rs.getInt("price");
+                detail = rs.getString("detail");
+                extraDate = rs.getDate("extraDate");
+                ExtraTBL extra = new ExtraTBL(extraID, roomNumber, extraName, extraNumber, price, detail, extraDate);
+                arrExtra.add(extra);
+            }
+
+            rs.close();
+            ps.close();
+            conn.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBContext.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return arrExtra;
+    }
+
+    //get accout current to user change password
+    public LoginTBL getAccount(int cusID) {
+        LoginTBL acc = null;
+        try {
+            int customerID;
+            String uname;
+            String psw;
+            DBConnect dBConnect = new DBConnect();
+            Connection conn = dBConnect.getConnection();
+            String sqlSelect = "select * from LoginTBL where LoginTBL.customerID = " + cusID;
+            PreparedStatement ps = conn.prepareStatement(sqlSelect);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                customerID = rs.getInt("customerID");
+                uname = rs.getString("uname");
+                psw = rs.getString("psw");
+                acc = new LoginTBL(customerID, uname, psw);
+            }
+            rs.close();
+            ps.close();
+            conn.close();
+
+        } catch (Exception e) {
+        }
+        return acc;
+    }
+
+    //update password of user 
+    public boolean changeUserPass(int cusID, String pass) {
+        boolean condition = true;
+        try {
+            DBConnect dBConnect = new DBConnect();
+            Connection conn = dBConnect.getConnection();
+            String sqlSelect = "update LoginTBL set psw = ? where customerID = ?";
+            PreparedStatement ps = conn.prepareStatement(sqlSelect);
+            ps.setString(1, pass);
+            ps.setInt(2, cusID);
+            ps.executeUpdate();
+            ps.close();
+            conn.close();
+        } catch (Exception e) {
+            condition = false;
+        }
+        return condition;
+    }
+
     //get data tu bang RoomType
     public ArrayList<RoomTypeTBL> getDataRoomType() throws SQLException {
         ArrayList<RoomTypeTBL> arr = new ArrayList<>();
@@ -203,31 +353,29 @@ public class DBContext {
         }
         return numPerson;
     }
-    
+
     public void createNewTypeRoom(int RoomID, int optional, int closed, int price, String note) throws SQLException {
         DBConnect dBConnect = new DBConnect();
         Connection con = dBConnect.getConnection();
         Statement stm = con.createStatement();
-        String query = "INSERT INTO RoomTypeTBL Values ("+RoomID+","+optional+","+closed+","+price+",'"+note+"');";
+        String query = "INSERT INTO RoomTypeTBL Values (" + RoomID + "," + optional + "," + closed + "," + price + ",'" + note + "');";
         stm.execute(query);
     }
-    
-    public void updateTypeRoom(int RoomID, int price) throws SQLException
-    {
+
+    public void updateTypeRoom(int RoomID, int price) throws SQLException {
         DBConnect dBConnect = new DBConnect();
         Connection con = dBConnect.getConnection();
         Statement stm = con.createStatement();
-        String query = "update RoomTypeTBL set price="+price+" where roomTypeID ="+RoomID+ ";";
+        String query = "update RoomTypeTBL set price=" + price + " where roomTypeID =" + RoomID + ";";
         stm.execute(query);
     }
-    
-    public void updateRoomInFo(int RoomNumber, int RoomTypeID) throws SQLException
-    {
+
+    public void updateRoomInFo(int RoomNumber, int RoomTypeID) throws SQLException {
         DBConnect dBConnect = new DBConnect();
         Connection con = dBConnect.getConnection();
         Statement stm = con.createStatement();
-        String query = "update RoomInfoTBL set roomTypeID="+RoomTypeID+" where roomNumber ="+RoomNumber+ ";";
+        String query = "update RoomInfoTBL set roomTypeID=" + RoomTypeID + " where roomNumber =" + RoomNumber + ";";
         stm.execute(query);
     }
-    
+
 }
