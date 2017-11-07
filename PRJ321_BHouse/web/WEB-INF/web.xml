@@ -48,6 +48,10 @@
         <servlet-name>HandleEditCustomer</servlet-name>
         <servlet-class>servlets.HandleEditCustomer</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HandleCreateNoti</servlet-name>
+        <servlet-class>servlets.HandleCreateNoti</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>TestServlet</servlet-name>
         <url-pattern>/TestServlet</url-pattern>
@@ -95,6 +99,10 @@
     <servlet-mapping>
         <servlet-name>HandleEditCustomer</servlet-name>
         <url-pattern>/HandleEditCustomer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleCreateNoti</servlet-name>
+        <url-pattern>/HandleCreateNoti</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -15,6 +15,7 @@ import enities.RoomInfoTBL;
 import enities.RoomTypeTBL;
 import enities.Roommates;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -514,5 +515,13 @@ public class DBContext {
         con.close();
         return arr;
     }
-
+public void createNoti(String title, String content, Date date) throws SQLException
+    {
+        DBConnect dBConnect = new DBConnect();
+        Connection con = dBConnect.getConnection();
+        Statement stm = con.createStatement();
+        String query = "insert into Notification Values ('"+title+"','"+content+"','"+date+"');";
+        stm.execute(query);
+        con.close();
+    }
 }

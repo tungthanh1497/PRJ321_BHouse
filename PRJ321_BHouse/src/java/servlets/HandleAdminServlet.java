@@ -92,6 +92,9 @@ public class HandleAdminServlet extends HttpServlet {
             }else if(request.getParameter("view") != null)
             {
                 request.getRequestDispatcher("ViewCustomer.jsp").forward(request, response);
+            }else if(request.getParameter("noti") != null)
+            {
+                request.getRequestDispatcher("CreateNoti.jsp").forward(request, response);
             }
         }
     }
